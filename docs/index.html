@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Tools for checking, fixing, and cleaning DOI fields in BibTeX files.">
-  <title>bibtex-doi-checker</title>
+  <meta name="description" content="Four tools for checking DOI fields in BibTeX files and PDF references.">
+  <title>bibtex/pdf-doi-checker</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <main>
     <section class="hero">
-      <p class="eyebrow">BIBTEX + CROSSREF</p>
+      <p class="eyebrow">BIBTEX + PDF + METADATA</p>
       <h1>Keep DOI fields<br><em>useful.</em></h1>
-      <p class="intro">Three focused commands to check metadata, find missing
-        identifiers, and turn DOI URLs into clean BibTeX fields. Crossref
-        handles standard DOIs; arXiv handles arXiv DOI metadata.</p>
+      <p class="intro">Four focused commands to check BibTeX metadata, find
+        missing identifiers, clean DOI fields, and audit PDF references.
+        Crossref handles standard DOIs; arXiv handles arXiv DOI metadata.</p>
       <div class="actions">
         <a class="button" href="https://github.com/dcoeurjo/bibtex-doi-checker">View on GitHub</a>
         <a class="link" href="#commands">Explore commands <span>↓</span></a>
@@ -27,6 +27,7 @@
         <li><span>01</span> Check your bibliography</li>
         <li><span>02</span> Fill confident gaps</li>
         <li><span>03</span> Clean the final file</li>
+        <li><span>04</span> Audit PDF references</li>
       </ol>
     </section>
 
@@ -62,7 +63,8 @@
         <h2>Scan PDFs</h2>
         <p>Validate DOI shortcodes and resolver URLs in a text-based PDF.
           Invalid references are reported with their page number. Add
-          <code>-v</code> to see parsed and tested DOI values.</p>
+          <code>-v</code> to see parsed and tested DOI values. Numbered
+          References sections also receive a tentative missing-DOI count.</p>
         <code>pdf-doi-checker -v article.pdf</code>
       </article>
     </section>

@@ -71,3 +71,23 @@ def test_pdf_checker_joins_line_wrapped_dois(monkeypatch, tmp_path, capsys):
     output = capsys.readouterr().out
     assert "\033[1;36mPARSED: Page 1: 10.1109/VLSM.2001.938899\033[0m" in output
     assert "\033[1;34mTESTING: 10.1109/VLSM.2001.938899\033[0m" in output
+
+
+def test_pdf_checker_estimates_references_without_doi(monkeypatch, tmp_path, capsys):
+    class Page:
+        def extract_text(self):
+            return """References
+[1] First Paper. https://doi.org/10.1000/first
+[2] Second Paper without a DOI.
+[3] Third Paper. 10.1000/third
+"""
+
+    class Reader:
+        pages = [Page()]
+
+    monkeypatch.setattr(pdf_cli, "PdfReader", lambda path: Reader())
+    monkeypatch.setattr(sys, "argv", ["pdf-doi-checker", str(tmp_path / "article.pdf")])
+    monkeypatch.setattr(pdf_cli, "resolve_work", lambda doi, timeout: None)
+
+    assert pdf_cli.check_main() == 0
+    assert "Tentative references without DOI: 1 of 3." in capsys.readouterr().out

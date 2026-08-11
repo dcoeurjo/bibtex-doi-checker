@@ -4,6 +4,8 @@ Small command-line tools for checking, completing, and cleaning DOI
 fields in BibTeX files and PDF. They use the
 [Crossref REST API](https://api.crossref.org) for paper metadata, except arXiv
 DOIs, which are resolved through the [arXiv API](https://info.arxiv.org/help/api/).
+The suite includes four commands: BibTeX checking, fixing, and cleaning, plus
+PDF reference checking.
 
 The companion [documentation site](docs/index.html) gives a visual overview
 and copyable command examples.
@@ -100,6 +102,8 @@ the arXiv API. Every invalid DOI occurrence is reported with its one-based PDF
 page number; repeated references are reported on every page where they occur.
 Scanned PDFs must contain selectable text, not only images.
 Pass `-v` or `--verbose` to print each parsed DOI and each unique DOI lookup.
+When it finds a `References` or `Bibliography` heading followed by numbered
+entries, it also reports a tentative count of references without a DOI.
 
 ## Example files
 
@@ -123,4 +127,3 @@ python -m pytest -q
 ## Contributing
 
 Feel free to report any bugs or feature requests by opening an issue. Pull requests are welcome. If you have bibtex entries or PDF files that are not handled correctly, please include them in the issue or pull request.
-

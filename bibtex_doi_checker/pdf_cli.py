@@ -18,6 +18,8 @@ DOI_REFERENCE_PATTERN = re.compile(
     r"(?:https?://(?:dx\.)?doi\.org/)?10\.\d{1,12}/[^\s<>{}\[\]\"']+",
     re.IGNORECASE,
 )
+REFERENCES_HEADING_PATTERN = re.compile(r"(?im)^\s*(?:references|bibliography)\s*$")
+NUMBERED_REFERENCE_PATTERN = re.compile(r"(?m)^\s*(?:\[\d+\]|\d+[.)])\s+")
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -32,13 +34,35 @@ def _parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _doi_occurrences(reader: PdfReader) -> list[tuple[int, str]]:
+def _page_texts(reader: PdfReader) -> list[str]:
+    return [
+        re.sub(r"(10\.\d{1,12}/\S*)\s*\n\s*(?=\d)", r"\1", page.extract_text() or "")
+        for page in reader.pages
+    ]
+
+
+def _doi_occurrences(page_texts: list[str]) -> list[tuple[int, str]]:
     occurrences = []
-    for page_number, page in enumerate(reader.pages, start=1):
-        text = page.extract_text() or ""
-        text = re.sub(r"(10\.\d{1,12}/\S*)\s*\n\s*(?=\d)", r"\1", text)
+    for page_number, text in enumerate(page_texts, start=1):
         occurrences.extend((page_number, match.group()) for match in DOI_REFERENCE_PATTERN.finditer(text))
     return occurrences
+
+
+def _reference_doi_stats(page_texts: list[str]) -> tuple[int, int] | None:
+    """Estimate numbered references that do not contain a DOI."""
+    references = REFERENCES_HEADING_PATTERN.search("\n".join(page_texts))
+    if not references:
+        return None
+    text = "\n".join(page_texts)[references.end() :]
+    starts = list(NUMBERED_REFERENCE_PATTERN.finditer(text))
+    if not starts:
+        return None
+    blocks = [
+        text[start.end() : starts[index + 1].start() if index + 1 < len(starts) else None]
+        for index, start in enumerate(starts)
+    ]
+    without_doi = sum(not DOI_REFERENCE_PATTERN.search(block) for block in blocks)
+    return len(blocks), without_doi
 
 
 def check_main() -> int:
@@ -48,7 +72,8 @@ def check_main() -> int:
     except (FileNotFoundError, PdfReadError) as error:
         _parser().error(str(error))
 
-    occurrences = _doi_occurrences(reader)
+    page_texts = _page_texts(reader)
+    occurrences = _doi_occurrences(page_texts)
     results: dict[str, str | None] = {}
     invalid = 0
     for page_number, raw_doi in occurrences:
@@ -75,4 +100,10 @@ def check_main() -> int:
         f"Checked {len(occurrences)} DOI occurrence(s) on {len(reader.pages)} page(s); "
         f"found {invalid} invalid occurrence(s)."
     )
+    reference_stats = _reference_doi_stats(page_texts)
+    if reference_stats:
+        references, without_doi = reference_stats
+        print(f"Tentative references without DOI: {without_doi} of {references}.")
+    else:
+        print("Tentative references without DOI: unavailable (no numbered References section found).")
     return 1 if invalid else 0
