@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bibtex-doi-checker"
+version = "0.1.0"
+description = "Check, fix, and clean DOI fields in BibTeX files"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {file = "LICENSE"}
+dependencies = ["bibtexparser>=1.4,<2", "pypdf>=4,<7"]
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+
+[project.scripts]
+bibtex-doi-checker = "bibtex_doi_checker.cli:check_main"
+bibtex-doi-fixer = "bibtex_doi_checker.cli:fix_main"
+bibtex-doi-cleaner = "bibtex_doi_checker.cli:clean_main"
+pdf-doi-checker = "bibtex_doi_checker.pdf_cli:check_main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.setuptools.packages.find]
+include = ["bibtex_doi_checker*"]
