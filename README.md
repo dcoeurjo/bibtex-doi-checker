@@ -1,7 +1,7 @@
-# bibtex-doi-checker
+# bibtex/pdf-doi-checker
 
-Three small command-line tools for checking, completing, and cleaning DOI
-fields in BibTeX files. They use the
+Small command-line tools for checking, completing, and cleaning DOI
+fields in BibTeX files and PDF. They use the
 [Crossref REST API](https://api.crossref.org) for paper metadata, except arXiv
 DOIs, which are resolved through the [arXiv API](https://info.arxiv.org/help/api/).
 
@@ -111,9 +111,16 @@ each command:
 - `missing-dois.bib` contains a Crossref-resolvable entry without a DOI field
   for the fixer.
 - `doi-urls.bib` contains bare and URL-form DOI values for the cleaner.
+- `Stochastic-Processes.pdf` is a small PDF with valid DOI references for the
+  PDF checker.
 
 ## Development
 
 ```console
 python -m pytest -q
 ```
+
+## Contributing
+
+Feel free to report any bugs or feature requests by opening an issue. Pull requests are welcome. If you have bibtex entries or PDF files that are not handled correctly, please include them in the issue or pull request.
+
