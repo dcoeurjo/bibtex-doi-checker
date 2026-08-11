@@ -7,6 +7,9 @@ DOIs, which are resolved through the [arXiv API](https://info.arxiv.org/help/api
 The suite includes four commands: BibTeX checking, fixing, and cleaning, plus
 PDF reference checking.
 
+For checking references from a PDF (not only from DOI keys as done here), see the companion
+[reference_check](https://github.com/rubenwiersma/reference_check)
+
 The companion [documentation site](docs/index.html) gives a visual overview
 and copyable command examples.
 
