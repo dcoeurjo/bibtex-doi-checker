@@ -8,89 +8,131 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <header class="site-header">
+    <a class="wordmark" href="#">bibtex<span>/</span>pdf-doi-checker</a>
+    <nav aria-label="Primary navigation">
+      <a href="#tools">Tools</a>
+      <a href="#method">Method</a>
+      <a href="#install">Install</a>
+      <a class="github-link" href="https://github.com/dcoeurjo/bibtex-doi-checker">GitHub ↗</a>
+    </nav>
+  </header>
+
   <main>
-    <section class="hero">
-      <p class="eyebrow">BIBTEX + PDF + METADATA</p>
-      <h1>Keep DOI fields<br><em>useful.</em></h1>
-      <p class="intro">Four focused commands to check BibTeX metadata, find
-        missing identifiers, clean DOI fields, and audit PDF references.
-        Crossref handles standard DOIs; arXiv handles arXiv DOI metadata.</p>
-      <div class="actions">
-        <a class="button" href="https://github.com/dcoeurjo/bibtex-doi-checker">View on GitHub</a>
-        <a class="link" href="#commands">Explore commands <span>↓</span></a>
+    <section class="hero" aria-labelledby="hero-title">
+      <p class="kicker">RESEARCH METADATA UTILITIES</p>
+      <div class="hero-grid">
+        <h1 id="hero-title">Reliable identifiers<br>for <em>research.</em></h1>
+        <div class="hero-summary">
+          <p>Four command-line tools for checking, completing, cleaning, and
+            auditing DOI data in BibTeX files and PDF references.</p>
+          <p class="source-note">Metadata is resolved through Crossref and,
+            for arXiv DOIs, the arXiv API.</p>
+          <a class="button" href="#tools">Explore the tools <span>↓</span></a>
+        </div>
       </div>
     </section>
 
-    <section class="workflow" aria-label="Workflow">
-      <p class="eyebrow">A SIMPLE WORKFLOW</p>
-      <ol>
-        <li><span>01</span> Check your bibliography</li>
-        <li><span>02</span> Fill confident gaps</li>
-        <li><span>03</span> Clean the final file</li>
-        <li><span>04</span> Audit PDF references</li>
-      </ol>
-    </section>
-
-    <section id="commands" class="commands">
-      <article class="command command-dark">
-        <p class="number">01</p>
-        <h2>Check</h2>
-        <p>Compare each DOI against Crossref title and author metadata. Minor
-          formatting differences are tolerated; likely mistakes stand out. The
-          summary counts all entries, DOI fields, and valid DOI values. Add
-          <code>-v</code> for colored two-column mismatch details and
-          <code>--threshold PERCENT</code> to tune title matching. Every
-          command supports <code>--csv OUTPUT.csv</code>.</p>
-        <code>bibtex-doi-checker -v --csv report.csv references.bib</code>
-      </article>
-      <article class="command command-coral">
-        <p class="number">02</p>
-        <h2>Fix</h2>
-        <p>Search Crossref and arXiv for entries without a DOI, then add only
-          a clear, high-confidence match to a new BibTeX file. When both
-          sources match, choose the DOI interactively. Add <code>-v</code> for
-          color diagnostics and tune matching with <code>--threshold</code>.</p>
-        <code>bibtex-doi-fixer -v --threshold 92 input.bib output.bib</code>
-      </article>
-      <article class="command command-yellow">
-        <p class="number">03</p>
-        <h2>Clean</h2>
-        <p>Strip resolver hosts from DOI fields and keep the bare identifier
-          your bibliography needs.</p>
-        <code>bibtex-doi-cleaner input.bib output.bib</code>
-      </article>
-      <article class="command command-mint">
-        <p class="number">04</p>
-        <h2>Scan PDFs</h2>
-        <p>Validate DOI shortcodes and resolver URLs in a text-based PDF.
-          Invalid references are reported with their page number. Add
-          <code>-v</code> to see parsed and tested DOI values. Numbered
-          References sections also receive a tentative missing-DOI count.</p>
-        <code>pdf-doi-checker -v article.pdf</code>
-      </article>
-    </section>
-
-    <section class="example">
+    <section class="context" aria-label="Overview">
       <div>
-        <p class="eyebrow">FROM URL TO IDENTIFIER</p>
-        <h2>One clean DOI,<br>no clutter.</h2>
+        <p class="kicker">AT A GLANCE</p>
+        <h2>Metadata quality,<br>without the manual audit.</h2>
       </div>
-      <div class="code-card">
-        <p class="dim">Before</p>
-        <code>doi = {https://doi.org/10.1145/324133.324140}</code>
-        <p class="dim">After</p>
-        <code>doi = {10.1145/324133.324140}</code>
+      <p>Use the suite to compare DOI metadata with your bibliography, find
+        high-confidence missing identifiers, standardize DOI fields, and
+        review DOI references in a paper before publication.</p>
+    </section>
+
+    <section id="tools" class="tools" aria-labelledby="tools-title">
+      <header class="section-heading">
+        <p class="kicker">COMMAND REFERENCE</p>
+        <h2 id="tools-title">Four focused tools</h2>
+      </header>
+      <div class="tool-grid">
+        <article class="tool">
+          <p class="tool-number">01</p>
+          <h3>Check BibTeX</h3>
+          <p>Compare each DOI against title and author metadata, with
+            configurable fuzzy matching and an audit summary.</p>
+          <code>bibtex-doi-checker -v references.bib</code>
+        </article>
+        <article class="tool">
+          <p class="tool-number">02</p>
+          <h3>Fix missing DOI</h3>
+          <p>Search Crossref and arXiv, then add only high-confidence DOI
+            matches to a new BibTeX file.</p>
+          <code>bibtex-doi-fixer input.bib output.bib</code>
+        </article>
+        <article class="tool">
+          <p class="tool-number">03</p>
+          <h3>Clean DOI fields</h3>
+          <p>Remove resolver hosts and keep only bare DOI identifiers while
+            preserving the rest of the bibliography.</p>
+          <code>bibtex-doi-cleaner input.bib output.bib</code>
+        </article>
+        <article class="tool">
+          <p class="tool-number">04</p>
+          <h3>Audit PDF references</h3>
+          <p>Validate DOI shortcodes and URLs in text-based PDFs, reporting
+            invalid references with their page number.</p>
+          <code>pdf-doi-checker -v article.pdf</code>
+        </article>
+      </div>
+      <p class="csv-note"><strong>Structured output.</strong> Every command
+        accepts <code>--csv OUTPUT.csv</code> for DOI reporting data.</p>
+    </section>
+
+    <section id="method" class="method" aria-labelledby="method-title">
+      <div class="method-copy">
+        <p class="kicker">METHOD</p>
+        <h2 id="method-title">Conservative by design.</h2>
+        <p>Matching normalizes punctuation, whitespace, Unicode, and author
+          surnames before comparing records. The fixer requires a
+          high-confidence title and author match; if both Crossref and arXiv
+          match, you choose the preferred source.</p>
+      </div>
+      <dl>
+        <div>
+          <dt>Crossref</dt>
+          <dd>Standard DOI metadata and discovery</dd>
+        </div>
+        <div>
+          <dt>arXiv</dt>
+          <dd>Metadata for <code>10.48550/arXiv.*</code> DOI values</dd>
+        </div>
+        <div>
+          <dt>PDF pages</dt>
+          <dd>Page-aware DOI validation and reference estimates</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="example" aria-labelledby="example-title">
+      <div>
+        <p class="kicker">NORMALIZATION EXAMPLE</p>
+        <h2 id="example-title">A DOI is an identifier,<br>not a web address.</h2>
+      </div>
+      <div class="example-code">
+        <p><span>INPUT</span><code>doi = {https://doi.org/10.1145/324133.324140}</code></p>
+        <div class="rule"></div>
+        <p><span>OUTPUT</span><code>doi = {10.1145/324133.324140}</code></p>
       </div>
     </section>
 
-    <section class="install">
-      <p class="eyebrow">GET STARTED</p>
-      <h2>Install, then run.</h2>
-      <code>python -m pip install .</code>
-      <p>Requires Python 3.9 or newer and an internet connection for Crossref
-        or arXiv lookups. Each command accepts <code>--timeout SECONDS</code>.</p>
+    <section id="install" class="install" aria-labelledby="install-title">
+      <p class="kicker">GET STARTED</p>
+      <h2 id="install-title">Install and inspect your references.</h2>
+      <code class="install-command">python -m pip install .</code>
+      <p>Requires Python 3.9 or newer. Network access is required for Crossref
+        and arXiv metadata lookups; use <code>--timeout SECONDS</code> to
+        adjust request limits.</p>
     </section>
   </main>
-  <footer>bibtex-doi-checker · MIT License</footer>
+
+  <footer>
+    <span>bibtex/pdf-doi-checker</span>
+    <span>Open-source research metadata utilities</span>
+    <span>MIT License</span>
+  </footer>
 </body>
 </html>
