@@ -13,6 +13,7 @@ from .arxiv import (
 )
 from .bibtex import normalize_doi, read_bibtex, write_bibtex
 from .crossref import CrossrefError, get_work, search_works
+from .csv_output import bibtex_rows, write_csv
 from .matching import Comparison, compare_entry, select_candidate, work_title
 
 
@@ -51,6 +52,7 @@ def _parser(
             metavar="PERCENT",
             help=f"minimum fuzzy title similarity percentage (default: {threshold:.0f})",
         )
+    parser.add_argument("--csv", type=Path, metavar="OUTPUT.csv", help="write DOI data to CSV")
     parser.add_argument("--timeout", type=float, default=15, help="Crossref timeout in seconds")
     return parser
 
@@ -169,6 +171,8 @@ def check_main() -> int:
         f"{valid_dois} with valid DOI; "
         f"{problems} problem(s)."
     )
+    if args.csv:
+        write_csv(args.csv, bibtex_rows(database.entries))
     return 1 if problems else 0
 
 
@@ -226,6 +230,8 @@ def fix_main() -> int:
             _print_fixer_details(entry, "DOI ADDED", "32", args.threshold)
         added += 1
     write_bibtex(database, args.output)
+    if args.csv:
+        write_csv(args.csv, bibtex_rows(database.entries))
     print(
         f"Added {added} DOI(s); "
         f"skipped {skipped} entry(s) with an existing DOI; "
@@ -251,5 +257,7 @@ def clean_main() -> int:
             entry["doi"] = doi
             changed += 1
     write_bibtex(database, args.output)
+    if args.csv:
+        write_csv(args.csv, bibtex_rows(database.entries))
     print(f"Cleaned {changed} DOI(s); {invalid} invalid DOI(s) left unchanged.")
     return 1 if invalid else 0

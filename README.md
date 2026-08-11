@@ -39,6 +39,10 @@ python -m pip install -e '.[test]'
 | `bibtex-doi-cleaner INPUT.bib OUTPUT.bib` | Replace DOI resolver URLs with bare DOI identifiers. | Yes |
 | `pdf-doi-checker INPUT.pdf` | Validate DOI references and report invalid occurrences by page. | No |
 
+All commands accept `--csv OUTPUT.csv` to write DOI data with the columns
+`bibtex_key`, `doi`, `title`, `authors`, and `doi_url`. PDF rows leave the
+BibTeX-specific fields blank because PDF references do not contain BibTeX keys.
+
 ### Check DOI metadata
 
 ```console

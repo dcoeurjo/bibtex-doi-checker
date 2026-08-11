@@ -12,6 +12,7 @@ from pypdf.errors import PdfReadError
 from .arxiv import ArxivError
 from .bibtex import normalize_doi
 from .crossref import CrossrefError
+from .csv_output import row, write_csv
 from .metadata import resolve_work
 
 DOI_REFERENCE_PATTERN = re.compile(
@@ -27,6 +28,7 @@ def _parser() -> argparse.ArgumentParser:
         description="Check DOI references in a PDF and report invalid occurrences by page."
     )
     parser.add_argument("input", type=Path, help="input PDF file")
+    parser.add_argument("--csv", type=Path, metavar="OUTPUT.csv", help="write DOI data to CSV")
     parser.add_argument(
         "-v", "--verbose", action="store_true", help="show parsed DOI values and lookup attempts"
     )
@@ -75,9 +77,11 @@ def check_main() -> int:
     page_texts = _page_texts(reader)
     occurrences = _doi_occurrences(page_texts)
     results: dict[str, str | None] = {}
+    csv_rows = []
     invalid = 0
     for page_number, raw_doi in occurrences:
         doi = normalize_doi(raw_doi)
+        csv_rows.append(row("", doi or raw_doi, "", ""))
         if args.verbose:
             print(f"\033[1;36mPARSED: Page {page_number}: {doi or raw_doi}\033[0m")
         if not doi:
@@ -106,4 +110,6 @@ def check_main() -> int:
         print(f"Tentative references without DOI: {without_doi} of {references}.")
     else:
         print("Tentative references without DOI: unavailable (no numbered References section found).")
+    if args.csv:
+        write_csv(args.csv, csv_rows)
     return 1 if invalid else 0
