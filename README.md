@@ -1,5 +1,8 @@
 # bibtex/pdf-doi-checker
 
+A [digital object identifier (DOI)](https://en.wikipedia.org/wiki/Digital_object_identifier)
+is a persistent identifier for scholarly publications and other digital objects.
+
 Small command-line tools for checking, completing, and cleaning DOI
 fields in BibTeX files and PDF. They use the
 [Crossref REST API](https://api.crossref.org) for paper metadata, except arXiv
