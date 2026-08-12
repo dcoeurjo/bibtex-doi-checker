@@ -34,7 +34,7 @@ python -m pip install -e '.[test]'
 
 | Command | Purpose | Writes a file |
 | --- | --- | --- |
-| `bibtex-doi-checker INPUT.bib` | Check DOI/title/author metadata against Crossref. | No |
+| `bibtex-doi-checker INPUT.{bib,bbl}` | Check DOI/title/author metadata against Crossref. | No |
 | `bibtex-doi-fixer INPUT.bib OUTPUT.bib` | Add high-confidence DOIs to entries without one. | Yes |
 | `bibtex-doi-cleaner INPUT.bib OUTPUT.bib` | Replace DOI resolver URLs with bare DOI identifiers. | Yes |
 | `pdf-doi-checker INPUT.pdf` | Validate DOI references and report invalid occurrences by page. | No |
@@ -42,6 +42,9 @@ python -m pip install -e '.[test]'
 All commands accept `--csv OUTPUT.csv` to write DOI data with the columns
 `bibtex_key`, `doi`, `title`, `authors`, and `doi_url`. PDF rows leave the
 BibTeX-specific fields blank because PDF references do not contain BibTeX keys.
+Their final summaries include one stacked colored progress bar: green marks
+valid DOI coverage or successful updates, red marks DOI problems or unresolved
+entries, and gray/yellow segments show missing or already-present DOI values.
 
 ### Check DOI metadata
 
@@ -63,6 +66,8 @@ and authors beside the resolved metadata in a two-column view, plus the
 title/author comparison scores.
 Use `--threshold PERCENT` to set the minimum fuzzy title similarity; the
 checker default is 75.
+It accepts classic BibTeX files and common `.bbl` bibliography files generated
+by BibTeX or biblatex.
 
 ### Add missing DOIs
 

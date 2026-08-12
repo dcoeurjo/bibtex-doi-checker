@@ -25,7 +25,10 @@ def test_cleaner_writes_bare_doi(tmp_path, monkeypatch, capsys):
 
     assert cli.clean_main() == 0
     assert "doi = {10.1000/sample}" in output.read_text(encoding="utf-8")
-    assert "Cleaned 1 DOI(s)" in capsys.readouterr().out
+    output = capsys.readouterr().out
+    assert "Cleaned 1 DOI(s)" in output
+    assert "Progress [" in output
+    assert "valid DOI: 1 | invalid DOI: 0 | no DOI: 0" in output
 
 
 def test_checker_reports_crossref_mismatch(tmp_path, monkeypatch, capsys):
@@ -216,9 +219,10 @@ def test_fixer_reports_entries_skipped_for_existing_doi(tmp_path, monkeypatch, c
     monkeypatch.setattr(cli, "search_arxiv_works", lambda title, timeout: [])
 
     assert cli.fix_main() == 0
-    assert "Added 1 DOI(s); skipped 1 entry(s) with an existing DOI; 0 entry(s) unchanged." in (
-        capsys.readouterr().out
-    )
+    output = capsys.readouterr().out
+    assert "Added 1 DOI(s); skipped 1 entry(s) with an existing DOI; 0 entry(s) unchanged." in output
+    assert "Progress [" in output
+    assert "added: 1 | existing DOI: 1 | unchanged: 0" in output
 
 
 def test_fixer_prompts_for_crossref_or_arxiv_candidate(tmp_path, monkeypatch, capsys):

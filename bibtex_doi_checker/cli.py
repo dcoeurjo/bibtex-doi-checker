@@ -11,10 +11,12 @@ from .arxiv import (
     get_work as get_arxiv_work,
     search_works as search_arxiv_works,
 )
+from .bbl import read_bbl
 from .bibtex import normalize_doi, read_bibtex, write_bibtex
 from .crossref import CrossrefError, get_work, search_works
 from .csv_output import bibtex_rows, write_csv
 from .matching import Comparison, compare_entry, select_candidate, work_title
+from .progress import GRAY, GREEN, RED, YELLOW, stacked_progress_bar
 
 
 def _threshold(value: str) -> float:
@@ -32,9 +34,10 @@ def _parser(
     output: bool = False,
     verbose: bool = False,
     threshold: float | None = None,
+    input_help: str = "input BibTeX file",
 ) -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=description)
-    parser.add_argument("input", type=Path, help="input BibTeX file")
+    parser.add_argument("input", type=Path, help=input_help)
     if output:
         parser.add_argument("output", type=Path, help="output BibTeX file")
     if verbose:
@@ -128,13 +131,16 @@ def _choose_candidate(
 
 def check_main() -> int:
     args = _parser(
-        "Check DOI metadata against BibTeX entries.", verbose=True, threshold=75
+        "Check DOI metadata against BibTeX entries.",
+        verbose=True,
+        threshold=75,
+        input_help="input BibTeX or BBL file",
     ).parse_args()
-    database = read_bibtex(args.input)
+    entries = read_bbl(args.input) if args.input.suffix.casefold() == ".bbl" else read_bibtex(args.input).entries
     problems = 0
     entries_with_doi = 0
     valid_dois = 0
-    for entry in database.entries:
+    for entry in entries:
         value = entry.get("doi")
         if value is None:
             continue
@@ -166,13 +172,23 @@ def check_main() -> int:
             problems += 1
     print(
         "Statistics: "
-        f"{len(database.entries)} total entries; "
+        f"{len(entries)} total entries; "
         f"{entries_with_doi} with DOI; "
         f"{valid_dois} with valid DOI; "
         f"{problems} problem(s)."
     )
+    print(
+        stacked_progress_bar(
+            len(entries),
+            [
+                ("matching DOI", entries_with_doi - problems, GREEN),
+                ("DOI problems", problems, RED),
+                ("no DOI", len(entries) - entries_with_doi, GRAY),
+            ],
+        )
+    )
     if args.csv:
-        write_csv(args.csv, bibtex_rows(database.entries))
+        write_csv(args.csv, bibtex_rows(entries))
     return 1 if problems else 0
 
 
@@ -237,13 +253,19 @@ def fix_main() -> int:
         f"skipped {skipped} entry(s) with an existing DOI; "
         f"{failed} entry(s) unchanged."
     )
+    print(
+        stacked_progress_bar(
+            len(database.entries),
+            [("added", added, GREEN), ("existing DOI", skipped, YELLOW), ("unchanged", failed, RED)],
+        )
+    )
     return 1 if failed else 0
 
 
 def clean_main() -> int:
     args = _parser("Normalize DOI fields to bare DOI identifiers.", output=True).parse_args()
     database = read_bibtex(args.input)
-    changed = invalid = 0
+    changed = invalid = valid = 0
     for entry in database.entries:
         value = entry.get("doi")
         if not value:
@@ -253,6 +275,7 @@ def clean_main() -> int:
             print(f"{_entry_name(entry)}: invalid DOI left unchanged: {value}")
             invalid += 1
             continue
+        valid += 1
         if doi != value:
             entry["doi"] = doi
             changed += 1
@@ -260,4 +283,15 @@ def clean_main() -> int:
     if args.csv:
         write_csv(args.csv, bibtex_rows(database.entries))
     print(f"Cleaned {changed} DOI(s); {invalid} invalid DOI(s) left unchanged.")
+    total_dois = valid + invalid
+    print(
+        stacked_progress_bar(
+            len(database.entries),
+            [
+                ("valid DOI", valid, GREEN),
+                ("invalid DOI", invalid, RED),
+                ("no DOI", len(database.entries) - total_dois, GRAY),
+            ],
+        )
+    )
     return 1 if invalid else 0

@@ -32,6 +32,8 @@ def test_pdf_checker_reports_invalid_doi_page_numbers(monkeypatch, tmp_path, cap
     assert "Page 2: invalid DOI: 10.1000/missing (HTTP 404)" in output
     assert "Page 3: invalid DOI: 10.1000/missing (HTTP 404)" in output
     assert "Checked 3 DOI occurrence(s) on 3 page(s); found 2 invalid occurrence(s)." in output
+    assert "Progress [" in output
+    assert "valid DOI: 1 | invalid DOI: 2" in output
 
 
 def test_pdf_checker_reports_syntactically_invalid_dois(monkeypatch, tmp_path, capsys):

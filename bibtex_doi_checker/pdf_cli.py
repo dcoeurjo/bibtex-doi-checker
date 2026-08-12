@@ -14,6 +14,7 @@ from .bibtex import normalize_doi
 from .crossref import CrossrefError
 from .csv_output import row, write_csv
 from .metadata import resolve_work
+from .progress import GREEN, RED, stacked_progress_bar
 
 DOI_REFERENCE_PATTERN = re.compile(
     r"(?:https?://(?:dx\.)?doi\.org/)?10\.\d{1,12}/[^\s<>{}\[\]\"']+",
@@ -103,6 +104,12 @@ def check_main() -> int:
     print(
         f"Checked {len(occurrences)} DOI occurrence(s) on {len(reader.pages)} page(s); "
         f"found {invalid} invalid occurrence(s)."
+    )
+    print(
+        stacked_progress_bar(
+            len(occurrences),
+            [("valid DOI", len(occurrences) - invalid, GREEN), ("invalid DOI", invalid, RED)],
+        )
     )
     reference_stats = _reference_doi_stats(page_texts)
     if reference_stats:
